@@ -2,6 +2,12 @@
 
 var enemyStartLoc = [50, 135, 220];
 
+var random = function(min,max){
+
+    return Math.floor((Math.random() * max) + min);
+
+}
+
 var Enemy = function() {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
@@ -9,17 +15,23 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.x;
-    this.y;
-    this.speed;
-
+    this.x = random(500,750) * -1;
+    this.y = enemyStartLoc[random(0,3)];
+    this.speed = random(200,400);
 };
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
 
-    this.x++;
+    this.x = this.x + (dt * this.speed);
+
+    if (this.x > 550){
+        this.x = random(500,750) * -1;
+        this.y = enemyStartLoc[random(0,3)];
+        this.speed = random(200,400);
+    }
+
 
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
@@ -32,10 +44,6 @@ Enemy.prototype.render = function() {
     this.lastDt = new Date();
 };
 
-Enemy.prototype.startLoc = function(x, y){
-    this.x = x;
-    this.y = y;
-}
 
 // Now write your own player class
 // This class requires an update(), render() and
@@ -44,11 +52,17 @@ var Player = function(){
     this.sprite = 'images/char-boy.png';
     this.x = 200;
     this.y = 435;
-    this.speed;
+    this.height = 40;
+    this.width = 35;
 }
 
 Player.prototype = Object.create(Enemy.prototype);
 Player.prototype.constructor = Player;
+Player.prototype.update = function(){
+    if (this.y < 25)
+        this.y = 435;
+}
+
 Player.prototype.handleInput = function(key){
 
     console.log(this.x,this.y);
@@ -65,6 +79,9 @@ Player.prototype.handleInput = function(key){
         case 'up':
             if (this.y > 35)
                 this.y -= 100;
+            else if (this.y === 35){
+                this.y -= 40;
+            }
             break;
         case 'down':
             if (this.y < 435)
@@ -84,10 +101,15 @@ var player = new Player();
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var enemy = new Enemy();
-enemy.startLoc(0,50);
+var allEnemies = [ ]
 
-var allEnemies = [ enemy ]
+for (var i=0; i<5; i++){
+
+    var enemy = new Enemy();
+    allEnemies.push(enemy);
+}
+
+
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.

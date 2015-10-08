@@ -93,6 +93,11 @@ var Engine = (function(global) {
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
+
+            if ((Math.abs(enemy.x - player.x) < 35 ) && (Math.abs(enemy.y - player.y) < 40)){
+                player.y = 435;
+            }
+
         });
         player.update();
     }
